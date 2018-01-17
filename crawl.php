@@ -4,7 +4,7 @@
 //error_reporting(E_ALL);
 set_time_limit(3600);
 libxml_use_internal_errors();
-
+include "vars.php";
 
 foreach ($data as $class => $url) {
 	$classRoot = "{$mediaRoot}{$class}/";
