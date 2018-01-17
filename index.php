@@ -66,7 +66,7 @@
       text-align: center;
     }
     video {
-      width: auto;
+      width: 100%;
       margin: auto;
       max-height: calc(100vh - 200px);
     }
