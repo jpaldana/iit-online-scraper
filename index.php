@@ -20,6 +20,9 @@
     a:hover {
       text-decoration: underline;
     }
+    a.active {
+      color: salmon;
+    }
     header,
     body > section,
     footer {
@@ -29,6 +32,10 @@
     }
     header {
       text-align: center;
+    }
+    li > a {
+      padding: 0.25em;
+      display: block;
     }
     video {
       display: block;
@@ -140,9 +147,13 @@ $(function() {
   });
   $("li a").on("click", function(e) {
     e.preventDefault();
+    $("li a").removeClass("active");
+    $(this).addClass("active");
     $("aside.modal").removeClass("hidden");
     $("aside.modal h3").text($(this).text());
-    $("aside.modal video").append("<source src='" + $(this).attr("href") + "' type='video/mp4'>");
+    if ($("aside.modal video source").attr("src") !== $(this).attr("href")) {
+      $("aside.modal video").empty().append("<source src='" + $(this).attr("href") + "' type='video/mp4'>")[0].load();
+    }
   });
   $("video").on("click", function(e) {
     if ($(this)[0].paused) {
