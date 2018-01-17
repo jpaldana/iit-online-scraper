@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AldanaIO: IIT Online Scraper</title>
+  <title>IIT Online Scraper</title>
   <style type="text/css">
     :root {
       --main-bg: black;
@@ -79,7 +79,11 @@
 <body>
   <header>
     <h1>IIT Online Scraper</h1>
-    <a href="https://iit.aldana.io">iit.aldana.io</a>
+    <?php
+      if (file_exists("motd.txt")) {
+        echo file_get_contents("motd.txt");
+      }
+    ?>
   </header>
 
 <?php
