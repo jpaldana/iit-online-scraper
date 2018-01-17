@@ -48,7 +48,6 @@ foreach ($data as $class => $url) {
 			}
 		}
 	}
-	break;
 }
 
 function pushbulletMessage($title, $body) {
