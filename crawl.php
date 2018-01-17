@@ -16,7 +16,8 @@ foreach ($data as $class => $url) {
 
 	// cache rss
 	$classRss = "{$mediaRoot}/{$class}.rss";
-	if (!file_exists($classRss) || filemtime($classRss) >= time() + $cacheTime) {
+	if (!file_exists($classRss) || filemtime($classRss) + $cacheTime <= time()) {
+		note("[i] refreshing rss for {$class}");
 		$data = getRssData($class, $url);
 		file_put_contents($classRss, trim($data));
 	}
