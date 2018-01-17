@@ -11,7 +11,7 @@
     body {
       background-color: var(--main-bg);
       color: var(--main-fg);
-      font-family: "Trebuchet MS", Helvetica, sans-serif;
+      font-family: 'Montserrat', sans-serif;
     }
     a {
       color: lime;
@@ -67,10 +67,12 @@
       display: none;
     }
   </style>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
 </head>
 <body>
   <header>
-    <h1>AldanaIO: IIT Online Scraper</h1>
+    <h1>IIT Online Scraper</h1>
+    <a href="https://iit.aldana.io">iit.aldana.io</a>
   </header>
 
 <?php
