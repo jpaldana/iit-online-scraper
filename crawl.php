@@ -8,7 +8,9 @@ include "vars.php";
 
 foreach ($data as $class => $url) {
 	$classRoot = "{$mediaRoot}{$class}/";
+	note("[i] checking {$class}");
 	if (!is_dir($classRoot)) {
+		note("[i] making directory={$classRoot}");
 		mkdir($classRoot);
 	}
 
@@ -26,26 +28,40 @@ foreach ($data as $class => $url) {
 	//$dom = new DOMDocument();
 	
 	$webDir = substr($url, 0, strripos($url, "/"));
-	foreach ($rss["channel"]["item"] as $el) {
-		$date = $el["title"];
-		$desc = $el["description"];
-		$sources = $el["jwplayer_source"];
-		foreach ($sources as $src) {
+	if (isset($rss["channel"]["item"]["title"])) {
+		// bugfix: only 1 entry
+		parseLecture($rss["channel"]["item"], $webDir, $classRoot, $class, $desc);
+	}
+	elseif (is_array($rss["channel"]["item"])) {
+		foreach ($rss["channel"]["item"] as $el) {
+			parseLecture($el, $webDir, $classRoot);
+		}
+	}
+}
+
+function parseLecture($el, $webDir, $classRoot, $class, $desc) {
+	global $username, $password;
+	$date = $el["title"];
+	$desc = $el["description"];
+	$sources = $el["jwplayer_source"];
+	foreach ($sources as $src) {
+		$quality = "unknown";
+		if (isset($src["@attributes"]["label"])) {
 			$quality = $src["@attributes"]["label"];
-			if ($quality !== "720p") {
-				continue;
-			}
-			$remoteFile = "{$webDir}/" . $src["@attributes"]["file"];
-			$local = "{$classRoot}{$date}-{$quality}.mp4";
-			if (!file_exists($local)) {
-				// use cli curl
-				$userpass = sprintf("%s:%s", $username, $password);
-				$exec = sprintf("curl -o %s --ntlm -u %s %s", escapeshellarg($local), escapeshellarg($userpass), escapeshellarg($remoteFile));
-				note("[i] running curl to retrieve file local={$local}, remote={$remoteFile}");
-				note("[d] command=`{$exec}`");
-				exec($exec);
-				pushbulletMessage("New lecture available", "Lecture {$date} for {$class} ({$desc}) is now available.");
-			}
+		}
+		if ($quality !== "720p") {
+			continue;
+		}
+		$remoteFile = "{$webDir}/" . $src["@attributes"]["file"];
+		$local = "{$classRoot}{$date}-{$quality}.mp4";
+		if (!file_exists($local)) {
+			// use cli curl
+			$userpass = sprintf("%s:%s", $username, $password);
+			$exec = sprintf("curl -o %s --ntlm -u %s %s", escapeshellarg($local), escapeshellarg($userpass), escapeshellarg($remoteFile));
+			note("[i] running curl to retrieve file local={$local}, remote={$remoteFile}");
+			note("[d] command=`{$exec}`");
+			exec($exec);
+			pushbulletMessage("New lecture available", "Lecture {$date} for {$class} ({$desc}) is now available.");
 		}
 	}
 }
@@ -96,7 +112,7 @@ function cleanRssData($data) {
 }
 
 function note($text) {
-	$line = sprintf("[%s]%s", date("c"), $text);
+	$line = sprintf("[%s]%s\n", date("c"), $text);
 	file_put_contents("log.txt", $line, FILE_APPEND);
 	echo "{$line}\n";
 }
